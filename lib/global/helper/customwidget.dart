@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -152,14 +153,21 @@ class ProfilePIcture extends StatelessWidget {
 // ignore: must_be_immutable
 class PhoneNumberTextField extends StatelessWidget {
   TextEditingController controller;
+  FocusNode focusNode;
+  bool readOnly;
   PhoneNumberTextField({
     Key key,
     this.controller,
+    this.readOnly,
+    this.focusNode,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    //final SmsAutoFill _autoFill = SmsAutoFill();
     return PhoneFieldHint(
+      focusNode: focusNode,
+      readOnly: readOnly,
       controller: controller,
       autofocus: true,
       decoration: InputDecoration(
@@ -204,10 +212,13 @@ class OTP extends StatelessWidget {
     @required this.errorController,
     @required this.controller2,
     @required this.bloc,
+    @required this.controller3,
+    @required this.image,
   }) : super(key: key);
 
   final StreamController<ErrorAnimationType> errorController;
-  final TextEditingController controller2;
+  final TextEditingController controller2, controller3;
+  final File image;
   final UserBloc bloc;
 
   @override
@@ -236,7 +247,7 @@ class OTP extends StatelessWidget {
         color: Colors.amber,
       ),
       onCompleted: (v) {
-        bloc.verify(v);
+        bloc.verify(v, controller3.text, image);
       },
       onChanged: (value) {},
       beforeTextPaste: (text) {

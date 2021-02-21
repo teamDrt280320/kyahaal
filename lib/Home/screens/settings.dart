@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kyahaal/global/helper/palette.dart';
 import 'package:kyahaal/global/services/auth.dart';
@@ -33,6 +35,22 @@ class _SettingsState extends State<Settings> {
         child: Center(
           child: ListView(
             children: [
+              ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  child: ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: FirebaseAuth.instance.currentUser.photoURL,
+                      placeholder: (context, url) =>
+                          CircularProgressIndicator(),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  FirebaseAuth.instance.currentUser.displayName,
+                ),
+              ),
               ListTile(
                 onTap: () {
                   Navigator.pop(context);

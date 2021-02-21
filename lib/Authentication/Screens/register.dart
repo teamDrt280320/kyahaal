@@ -20,6 +20,8 @@ class _RegisterUserState extends State<RegisterUser>
     with SingleTickerProviderStateMixin {
   TextEditingController controller;
   TextEditingController controller2;
+  TextEditingController controller3;
+  FocusNode focusNode = FocusNode();
   var otpSent = false;
   var showError = false;
   var showLoaing = false;
@@ -69,6 +71,7 @@ class _RegisterUserState extends State<RegisterUser>
   @override
   void initState() {
     super.initState();
+    //focusNode.nextFocus();
     btnController = AnimationController(
       vsync: this,
       duration: Duration(
@@ -83,6 +86,7 @@ class _RegisterUserState extends State<RegisterUser>
       );
     controller = TextEditingController();
     controller2 = TextEditingController();
+    controller3 = TextEditingController();
     bloc = UserBloc();
     controller.addListener(
       () {
@@ -92,6 +96,14 @@ class _RegisterUserState extends State<RegisterUser>
               () {
                 showError = false;
                 otpSent = false;
+              },
+            );
+          }
+        } else {
+          if (mounted) {
+            setState(
+              () {
+                showError = false;
               },
             );
           }
@@ -163,10 +175,10 @@ class _RegisterUserState extends State<RegisterUser>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TitleText(
-                text: "New\nAccount",
+                text: "Welcome\nOnboard",
               ),
               StepsText(
-                text: "1",
+                text: otpSent ? "2" : "1",
               ),
             ],
           ),
@@ -181,29 +193,84 @@ class _RegisterUserState extends State<RegisterUser>
                       child: Image.file(_image),
                     ),
               onTap: () {
-                buildShowModalBottomSheet(context);
-                //getImage();
+                if (!otpSent && !showLoaing) {
+                  buildShowModalBottomSheet(context);
+                }
               },
             ),
           ),
           Container(
             child: PhoneNumberTextField(
+              focusNode: focusNode,
               controller: controller,
+              readOnly: otpSent && !showLoaing,
             ),
           ),
           SizedBox(
             height: 10,
           ),
+          Container(
+            child: TextField(
+              controller: controller3,
+              readOnly: otpSent && !showLoaing,
+              maxLength: 20,
+              style: GoogleFonts.openSans(
+                color: Colors.amber,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.2,
+              ),
+              decoration: InputDecoration(
+                counter: null,
+                counterStyle: TextStyle(
+                  color: Colors.amber,
+                ),
+                //prefixText: "+91",
+                prefixStyle: GoogleFonts.openSans(
+                  color: Colors.amber,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+                labelText: "UserName".toUpperCase(),
+                labelStyle: GoogleFonts.openSans(
+                  color: Colors.white,
+                  letterSpacing: 1.1,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+                focusColor: Colors.orange,
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.amber,
+                    width: 2.2,
+                  ),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Colors.white30,
+                    width: 2.2,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
           Visibility(
             visible: otpSent,
             child: OTP(
+              controller3: controller3,
+              image: _image,
               errorController: errorController,
               controller2: controller2,
               bloc: bloc,
             ),
           ),
-          SizedBox(
-            height: 30,
+          Visibility(
+            visible: otpSent,
+            child: SizedBox(
+              height: 30,
+            ),
           ),
           Visibility(
             visible: showError,
@@ -248,13 +315,11 @@ class _RegisterUserState extends State<RegisterUser>
                     );
                   }
                   otpSent
-                      ? bloc.verify(controller2.text)
-                      : bloc.signIn(controller.text);
+                      ? bloc.verify(controller2.text, controller3.text, _image)
+                      : bloc.signIn(controller.text, controller3.text, _image);
                 }
               },
-              onTapDown: (abc) {
-                //btnController.forward();
-              },
+              onTapDown: (abc) {},
             ),
           ),
         ],
