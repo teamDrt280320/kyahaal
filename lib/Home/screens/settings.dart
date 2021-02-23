@@ -42,7 +42,7 @@ class _SettingsState extends State<Settings> {
                     child: CachedNetworkImage(
                       imageUrl: FirebaseAuth.instance.currentUser.photoURL,
                       placeholder: (context, url) =>
-                          CircularProgressIndicator(),
+                          Image.asset("assets/images/default_avatar.png"),
                       errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
                   ),
@@ -67,9 +67,7 @@ class _SettingsState extends State<Settings> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Navigator.pushNamed(context, '/contacts');
-        },
+        onPressed: () {},
         backgroundColor: KHColor.brandColorPrimary,
         child: Icon(
           Icons.person_add,
