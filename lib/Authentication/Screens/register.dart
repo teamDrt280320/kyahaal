@@ -12,6 +12,9 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RegisterUser extends StatefulWidget {
+  final UserBloc bloc;
+
+  const RegisterUser({Key key, this.bloc}) : super(key: key);
   @override
   _RegisterUserState createState() => _RegisterUserState();
 }
@@ -26,13 +29,15 @@ class _RegisterUserState extends State<RegisterUser>
   var showError = false;
   var showLoaing = false;
   String error;
-  UserBloc bloc;
+
   StreamController<ErrorAnimationType> errorController =
       StreamController<ErrorAnimationType>();
   AnimationController btnController;
   double _scale;
   File _image;
   final picker = ImagePicker();
+
+  //_RegisterUserState(this.widget.bloc);
 
   Future getImage(ImageSource source) async {
     final pickedFile = await picker.getImage(source: source);
@@ -87,7 +92,7 @@ class _RegisterUserState extends State<RegisterUser>
     controller = TextEditingController();
     controller2 = TextEditingController();
     controller3 = TextEditingController();
-    bloc = UserBloc();
+
     controller.addListener(
       () {
         if (controller.text.isEmpty) {
@@ -110,7 +115,7 @@ class _RegisterUserState extends State<RegisterUser>
         }
       },
     );
-    bloc.otpController.stream.listen(
+    widget.bloc.otpController.stream.listen(
       (event) {
         if (mounted) {
           setState(
@@ -121,7 +126,7 @@ class _RegisterUserState extends State<RegisterUser>
         }
       },
     );
-    bloc.verifyErrorController.stream.listen(
+    widget.bloc.verifyErrorController.stream.listen(
       (event) {
         if (event.isNotEmpty) {
           if (mounted) {
@@ -144,7 +149,7 @@ class _RegisterUserState extends State<RegisterUser>
         }
       },
     );
-    bloc.loadController.stream.listen((event) {
+    widget.bloc.loadController.stream.listen((event) {
       if (mounted) {
         setState(
           () {
@@ -159,7 +164,6 @@ class _RegisterUserState extends State<RegisterUser>
   void dispose() {
     super.dispose();
     controller.removeListener(() {});
-    bloc.dispose();
   }
 
   @override
@@ -263,7 +267,7 @@ class _RegisterUserState extends State<RegisterUser>
               image: _image,
               errorController: errorController,
               controller2: controller2,
-              bloc: bloc,
+              bloc: widget.bloc,
             ),
           ),
           Visibility(
@@ -315,8 +319,10 @@ class _RegisterUserState extends State<RegisterUser>
                     );
                   }
                   otpSent
-                      ? bloc.verify(controller2.text, controller3.text, _image)
-                      : bloc.signIn(controller.text, controller3.text, _image);
+                      ? widget.bloc
+                          .verify(controller2.text, controller3.text, _image)
+                      : widget.bloc
+                          .signIn(controller.text, controller3.text, _image);
                 }
               },
               onTapDown: (abc) {},

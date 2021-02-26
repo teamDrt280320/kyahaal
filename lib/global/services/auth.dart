@@ -84,23 +84,27 @@ class UserBloc {
   }
 
   completeSetup(File image, User user, String uname) async {
+    setupController.sink.add(false);
     if (image != null) {
-      String fileName = FirebaseAuth.instance.currentUser.uid + ".jpg";
-      Reference firebaseStorageRef = FirebaseStorage.instance
-          .ref()
-          .child("/profilePictures")
-          .child(fileName);
+      String fileName = user.uid + ".jpg";
+      Reference firebaseStorageRef =
+          FirebaseStorage.instance.ref().child("/profilePictures/$fileName");
       UploadTask uploadTask = firebaseStorageRef.putFile(image);
-      TaskSnapshot taskSnapshot = uploadTask.snapshot;
-      String durl = await taskSnapshot.ref.getDownloadURL();
-      await user.updateProfile(
-        displayName: uname,
-        photoURL: durl,
-      );
+      uploadTask.whenComplete(() async {
+        TaskSnapshot taskSnapshot = uploadTask.snapshot;
+        String durl = await taskSnapshot.ref.getDownloadURL();
+        await user.updateProfile(
+          displayName: uname,
+          photoURL: durl,
+        );
+        setupController.sink.add(true);
+      });
     } else {
       await user.updateProfile(
+        photoURL: null,
         displayName: uname,
       );
+      setupController.sink.add(true);
     }
   }
 
