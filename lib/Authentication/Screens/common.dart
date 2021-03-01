@@ -13,6 +13,11 @@ class CommonAuthScreen extends StatefulWidget {
 
 class _CommonAuthScreenState extends State<CommonAuthScreen> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),

@@ -24,6 +24,7 @@ class _WrapperState extends State<Wrapper> {
   void initState() {
     super.initState();
     setupStreamPreferences();
+    bloc.setupController.sink.add(FirebaseAuth.instance.currentUser != null);
     bloc.setupController.stream.listen((event) {
       setState(() {
         setupDone = event;
@@ -40,6 +41,7 @@ class _WrapperState extends State<Wrapper> {
   @override
   Widget build(BuildContext context) {
     var user = Provider.of<User>(context);
+    bloc.setupController.sink.add(FirebaseAuth.instance.currentUser != null);
     return user == null || !setupDone
         ? CommonAuthScreen(
             bloc: bloc,

@@ -32,6 +32,8 @@ class _ContactsState extends State<Contacts> {
   //check and ask for contact permission
   askContactPermission() async {
     if (await Permission.contacts.request().isGranted) {
+      setupDatabase();
+      getContacts();
       setState(() {
         proceed = true;
       });
@@ -100,8 +102,7 @@ class _ContactsState extends State<Contacts> {
   void initState() {
     super.initState();
     askContactPermission();
-    setupDatabase();
-    getContacts();
+
     contactsBloc.contactsController.stream.listen((event) {
       commonUser.clear();
       commonUser.addAll(event);

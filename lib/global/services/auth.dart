@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:kyahaal/global/helper/strings.dart';
+import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 //class AuthService {
 final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -19,6 +21,11 @@ Stream<User> get user {
 signOut() async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   preferences.clear();
+  String path = join(await getDatabasesPath(), 'contacts.db');
+  String path2 = join(await getDatabasesPath(), 'messages.db');
+  await deleteDatabase(path);
+  await deleteDatabase(path2);
+
   _auth.signOut();
 }
 

@@ -38,17 +38,19 @@ addContact(KHUser user, {String name}) async {
 }
 
 getUsers() async {
-  final Database db = await localdb;
-  final List<Map<String, dynamic>> maps = await db.query(
-    'contacts',
-    orderBy: "devicename",
-  );
-  return List.generate(
-    maps.length,
-    (i) {
-      return LocalKhUser.fromJson(maps[i]);
-    },
-  );
+  if (localdb != null) {
+    final Database db = await localdb;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'contacts',
+      orderBy: "devicename",
+    );
+    return List.generate(
+      maps.length,
+      (i) {
+        return LocalKhUser.fromJson(maps[i]);
+      },
+    );
+  }
 }
 
 class ContactsBloc {
