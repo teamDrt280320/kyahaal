@@ -1,11 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:get/route_manager.dart';
-import 'package:kyahaal/views/home/home.dart';
+import 'package:get/get.dart';
+import 'package:kyahaal/utility/bindings/initialbindings.dart';
+import 'package:kyahaal/utility/pages.dart';
+import './utility/utility.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await Firebase.initializeApp();
   runApp(KyaHaal());
 }
@@ -16,16 +17,11 @@ class KyaHaal extends StatelessWidget {
     return GetMaterialApp(
       title: 'KyaHaal',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        appBarTheme: AppBarTheme(
-            brightness: Brightness.dark,
-            centerTitle: true,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            textTheme: TextTheme()),
-        primarySwatch: Colors.blue,
-      ),
-      home: HomePage(),
+      theme: theme(),
+      onGenerateTitle: (context) => 'KyaHaal',
+      initialRoute: RoutesName.SPLASHPAGE,
+      initialBinding: InitialBindins(),
+      getPages: appPages,
     );
   }
 }
