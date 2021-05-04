@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/*
+ * Colors Constants Starts here
+ */
 const kPrimaryDarkColor = Color(0xFF2422DE);
 const kPrimaryColor = Color(0xFF7199F7);
 const kPrimaryLightColor = Color(0xFFF2F5FC);
@@ -22,6 +25,13 @@ const kPrimaryGradientColor = LinearGradient(
 );
 const kSecondaryColor = Color(0xFF979797);
 const kTextColor = Color(0xFF37303A);
+/*
+ * Colors Constants Ends here
+ */
+
+/*
+ * Colors Constants Ends here
+ */
 const kAnimationDuration = Duration(milliseconds: 200);
 final boxShadow = <BoxShadow>[
   BoxShadow(
@@ -57,3 +67,8 @@ var statusList = <String>[
   'Emergency calls only!',
   'DND',
 ];
+
+const String CONTACTAPI = "https://kyahaal.teamdrt.co.in/all";
+const String APIKEY = "zEgZUcl8eD4MjWyy4nttT1nDrLPwRgvU1UH5chrQ";
+
+const headers = {"x-api-key": APIKEY};

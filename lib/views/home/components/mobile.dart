@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:kyahaal/controllers/authcontroller.dart';
+import 'package:kyahaal/utility/pages.dart';
 import 'package:kyahaal/utility/utility.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:kyahaal/views/widgets.dart/customdrawer.dart';
 
 class HomePageMobile extends StatefulWidget {
   @override
@@ -15,11 +16,20 @@ class _HomePageMobileState extends State<HomePageMobile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: CustomDrawer(authController: _authController),
       appBar: AppBar(
+        centerTitle: false,
+        title: Text(
+          'KyaHaal',
+          style: GoogleFonts.openSans(
+            color: kDarkPurple,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         actions: [
           IconButton(
             icon: Icon(
-              MdiIcons.logout,
+              Icons.search,
               color: kDarkPurple,
             ),
             onPressed: () {
@@ -28,46 +38,20 @@ class _HomePageMobileState extends State<HomePageMobile> {
           )
         ],
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Center(
-              child: CircleAvatar(
-                backgroundColor: kPrimaryLightColor,
-                radius: 96,
-                child: Obx(
-                  () => ClipOval(
-                    child: _authController.firestoreUser.value == null ||
-                            _authController.firestoreUser.value.imgUrl == null
-                        ? Icon(
-                            LineIcons.user,
-                            size: 96,
-                            color: kDarkPurple,
-                          )
-                        : Image.network(
-                            _authController.firestoreUser.value.imgUrl,
-                          ),
-                  ),
-                ),
-              ),
-            ),
-            Obx(
-              () => Text(
-                _authController.firestoreUser.value == null
-                    ? ''
-                    : _authController.firestoreUser.value.uName ?? '',
-              ),
-            ),
-            Obx(
-              () => Text(
-                _authController.firestoreUser.value == null
-                    ? ''
-                    : _authController.firestoreUser.value.status ?? '',
-              ),
-            ),
-          ],
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: kPrimaryColor.withOpacity(0.25),
+        child: Icon(
+          Icons.message_outlined,
+          color: kPrimaryDarkColor,
         ),
+        elevation: 0.0,
+        onPressed: () {
+          Get.toNamed(
+            RoutesName.CONTACTS,
+          );
+        },
       ),
+      body: Container(),
     );
   }
 }

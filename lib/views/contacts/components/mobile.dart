@@ -1,0 +1,129 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
+import 'package:kyahaal/controllers/contactscontroller.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:kyahaal/modals/contact.dart';
+import 'package:kyahaal/utility/utility.dart';
+
+class ContactsPageMobile extends StatefulWidget {
+  @override
+  _ContactsPageMobileState createState() => _ContactsPageMobileState();
+}
+
+class _ContactsPageMobileState extends State<ContactsPageMobile> {
+  ContactsController _contactsController = Get.find();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Contacts',
+          style: GoogleFonts.openSans(
+            color: kDarkPurple,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+        ),
+        actions: [
+          Obx(
+            () => Visibility(
+              visible: _contactsController.fetching.value,
+              child: Container(
+                margin: EdgeInsets.symmetric(
+                  vertical: 16.0,
+                ),
+                height: 24,
+                width: 36,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  valueColor: AlwaysStoppedAnimation(
+                    kDarkPurple,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: ValueListenableBuilder<Box<ContactsModal>>(
+        valueListenable: _contactsController.friendsBox.listenable(),
+        builder: (context, box, _) {
+          print(box.values.length.toString());
+          return Container(
+            child: Center(
+              child: ListView.builder(
+                itemCount: box.length,
+                itemBuilder: (context, index) {
+                  var contact = box.getAt(index);
+                  return Card(
+                    elevation: 8,
+                    shadowColor: kPrimaryColor.withOpacity(
+                      0.5,
+                    ),
+                    margin: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4.0,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                        10,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 8.0,
+                      ),
+                      child: ListTile(
+                        selectedTileColor: kDarkPurple,
+                        trailing: Icon(
+                          Icons.arrow_forward_ios,
+                          color: kDarkPurple,
+                          size: 16,
+                        ),
+                        leading: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: kPrimaryColor.withOpacity(
+                                  0.5,
+                                ),
+                                blurRadius: 10.0,
+                                offset: Offset(
+                                  1,
+                                  3,
+                                ),
+                              ),
+                            ],
+                            image: DecorationImage(
+                              image: CachedNetworkImageProvider(
+                                contact.photo,
+                              ),
+                            ),
+                          ),
+                          height: 48,
+                          width: 48,
+                        ),
+                        title: Text(
+                          contact.contactName,
+                        ),
+                        subtitle: Text(
+                          contact.number,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

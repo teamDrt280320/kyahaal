@@ -76,9 +76,9 @@ AppBarTheme appBarTheme() {
     elevation: 0,
     brightness: Brightness.dark,
     actionsIconTheme: IconThemeData(
-      color: kTextColor,
+      color: kDarkPurple,
     ),
-    iconTheme: IconThemeData(color: kTextColor),
+    iconTheme: IconThemeData(color: kDarkPurple),
     centerTitle: true,
     textTheme: TextTheme(
       headline6: GoogleFonts.openSans(

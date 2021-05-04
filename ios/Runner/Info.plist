@@ -56,6 +56,8 @@
 	<string>Need library access to upload images</string> <!-- added this for photo library permission -->
 	<key>NSCameraUsageDescription</key> <!-- added this for camera permission -->
 	<string>Need camera access to take pictures</string> <!-- added this for camera permission -->
+	<key>NSContactsUsageDescription</key>
+	<string>For listing contacts which are using this app</string>
 
 </dict>
 </plist>
