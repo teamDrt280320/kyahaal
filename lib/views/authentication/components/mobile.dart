@@ -42,23 +42,7 @@ class _AuthPageMobileState extends State<AuthPageMobile> {
       body: Container(
         child: Column(
           children: [
-            Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: defaultRadius,
-                  boxShadow: boxShadow,
-                  image: DecorationImage(
-                    alignment: FractionalOffset.topCenter,
-                    fit: BoxFit.cover,
-                    image: AssetImage(
-                      'assets/images/auth.webp',
-                    ),
-                  ),
-                ),
-                height: SizeConfig.screenHeight * 0.33,
-                width: SizeConfig.screenWidth * 0.7,
-              ),
-            ),
+            buildVector(),
             SizedBox(
               height: getProportionateScreenHeight(25),
             ),
@@ -79,76 +63,12 @@ class _AuthPageMobileState extends State<AuthPageMobile> {
                         Obx(
                           () => _authController.codeSent.value
                               ? SizedBox.shrink()
-                              : Builder(
-                                  builder: (context) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 16, top: 16.0, right: 8.0),
-                                      child: Text(
-                                        '+91 ',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .subtitle1,
-                                      ),
-                                    );
-                                  },
-                                ),
+                              : buildPrefixText(),
                         ),
                         Obx(
                           () => _authController.codeSent.value
-                              ? IgnorePointer(
-                                  child: TextFormField(
-                                    controller: _authController.otpController,
-                                    readOnly: false,
-                                    maxLength: 6,
-                                    decoration: InputDecoration(
-                                      counterText: '',
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                      ),
-                                      prefixStyle:
-                                          TextStyle(color: Colors.transparent),
-                                      labelText: 'Enter OTP',
-                                      border: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                      focusedErrorBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                    ),
-                                    cursorColor: kPrimaryColor,
-                                    cursorRadius: Radius.circular(25),
-                                    cursorWidth: 1,
-                                    showCursor: true,
-                                  ),
-                                )
-                              : IgnorePointer(
-                                  child: TextFormField(
-                                    controller: _authController.phoneController,
-                                    readOnly: true,
-                                    maxLength: 10,
-                                    decoration: InputDecoration(
-                                      counterText: '',
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                      ),
-                                      prefixText: '+91 ',
-                                      prefixStyle:
-                                          TextStyle(color: Colors.transparent),
-                                      labelText: 'Enter your phone',
-                                      border: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                      focusedErrorBorder: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                    ),
-                                    cursorColor: kPrimaryColor,
-                                    cursorRadius: Radius.circular(25),
-                                    cursorWidth: 1,
-                                    showCursor: true,
-                                  ),
-                                ),
+                              ? buildOtpField()
+                              : buildPhoneField(),
                         ),
                       ],
                     ),
@@ -189,6 +109,97 @@ class _AuthPageMobileState extends State<AuthPageMobile> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Center buildVector() {
+    return Center(
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: defaultRadius,
+          boxShadow: boxShadow,
+          image: DecorationImage(
+            alignment: FractionalOffset.topCenter,
+            fit: BoxFit.cover,
+            image: AssetImage(
+              'assets/images/auth.webp',
+            ),
+          ),
+        ),
+        height: SizeConfig.screenHeight * 0.33,
+        width: SizeConfig.screenWidth * 0.7,
+      ),
+    );
+  }
+
+  Builder buildPrefixText() {
+    return Builder(
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.only(left: 16, top: 16.0, right: 8.0),
+          child: Text(
+            '+91 ',
+            style: Theme.of(context).textTheme.subtitle1,
+          ),
+        );
+      },
+    );
+  }
+
+  IgnorePointer buildPhoneField() {
+    return IgnorePointer(
+      child: TextFormField(
+        controller: _authController.phoneController,
+        readOnly: true,
+        maxLength: 10,
+        decoration: InputDecoration(
+          counterText: '',
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 20,
+          ),
+          prefixText: '+91 ',
+          prefixStyle: TextStyle(color: Colors.transparent),
+          labelText: 'Enter your phone',
+          border: InputBorder.none,
+          errorBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+        ),
+        cursorColor: kPrimaryColor,
+        cursorRadius: Radius.circular(25),
+        cursorWidth: 1,
+        showCursor: true,
+      ),
+    );
+  }
+
+  IgnorePointer buildOtpField() {
+    return IgnorePointer(
+      child: TextFormField(
+        controller: _authController.otpController,
+        readOnly: false,
+        maxLength: 6,
+        decoration: InputDecoration(
+          counterText: '',
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: 20,
+          ),
+          prefixStyle: TextStyle(color: Colors.transparent),
+          labelText: 'Enter OTP',
+          border: InputBorder.none,
+          errorBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          disabledBorder: InputBorder.none,
+          focusedErrorBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
+        ),
+        cursorColor: kPrimaryColor,
+        cursorRadius: Radius.circular(25),
+        cursorWidth: 1,
+        showCursor: true,
       ),
     );
   }

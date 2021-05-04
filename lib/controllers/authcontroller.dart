@@ -1,11 +1,15 @@
+import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:kyahaal/modals/user.dart';
+import 'package:kyahaal/utility/pages.dart';
 import 'package:kyahaal/views/views.dart';
 
 class AuthController extends GetxController {
@@ -14,10 +18,13 @@ class AuthController extends GetxController {
   final firestoreUser = Rxn<UserModal>();
   final phoneController = TextEditingController();
   final otpController = TextEditingController();
+  final userName = TextEditingController();
   var auth = FirebaseAuth.instance;
   var firestore = FirebaseFirestore.instance;
   var messaging = FirebaseMessaging.instance;
+  var storage = FirebaseStorage.instance;
   Rxn<String> tokeStream = Rxn<String>();
+  Rxn<Uint8List> image = Rxn<Uint8List>();
 
   final codeSent = false.obs;
   final signingIn = false.obs;
@@ -77,6 +84,7 @@ class AuthController extends GetxController {
           codeSent: (verificationId, resendToken) {
             print('codesent');
             codeSent.value = true;
+            signingIn.value = false;
             this.verificationId.value = verificationId;
             this.resendToken.value = resendToken;
           },
@@ -87,8 +95,6 @@ class AuthController extends GetxController {
       }
     } catch (e) {
       debugPrint(e.toString());
-    } finally {
-      signingIn.value = false;
     }
   }
 
@@ -165,10 +171,57 @@ class AuthController extends GetxController {
   }
 
   handleUserChanges(UserModal userModal) {
-    print(userModal.initialSetupDone);
+    if (!userModal.initialSetupDone && firestoreUser.value != null) {
+      Get.offAllNamed(RoutesName.COMPLETESETUPPAGE);
+    }
+  }
+
+  completeSetup(String status) async {
+    try {
+      var durl;
+      signingIn.value = true;
+      if (image.value != null) {
+        TaskSnapshot task;
+        task = await storage
+            .ref('users')
+            .child('profile_images')
+            .child(firebaseUser.value.uid + ".jpg")
+            .putData(image.value, SettableMetadata(contentType: 'image/jpeg'));
+        durl = await task.ref.getDownloadURL();
+      } else {
+        durl = '';
+      }
+
+      ///TODO : Add cehck for documents existence so as to decide whether to set or update the data
+      await firestore
+          .collection('users')
+          .doc(firebaseUser.value.uid)
+          .set(
+            new UserModal(
+              uName: userName.text,
+              imgUrl: durl,
+              status: status,
+              initialSetupDone: true,
+              token: await messaging.getToken(),
+            ).toJson(),
+          )
+          .then((value) {
+        signingIn.value = false;
+        Get.offAllNamed(RoutesName.HOMEPAGE);
+      });
+    } catch (e) {
+      print(e.toString());
+    } finally {
+      signingIn.value = false;
+    }
   }
 
   signOut() {
+    signingIn.value = false;
+    phoneController.clear();
+    otpController.clear();
+    userName.clear();
+    image.value = null;
     auth.signOut();
   }
 }

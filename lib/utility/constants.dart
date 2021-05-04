@@ -48,3 +48,12 @@ double getElevation(Set<MaterialState> states) {
   }
   return 5;
 }
+
+var statusList = <String>[
+  'Hey there! I’m using KyaHaal',
+  'Sleeping',
+  'Busy',
+  'At Work',
+  'Emergency calls only!',
+  'DND',
+];
