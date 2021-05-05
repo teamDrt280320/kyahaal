@@ -18,6 +18,7 @@ class _HomePageMobileState extends State<HomePageMobile> {
     return Scaffold(
       drawer: CustomDrawer(authController: _authController),
       appBar: AppBar(
+        brightness: Brightness.light,
         centerTitle: false,
         title: Text(
           'KyaHaal',
@@ -32,9 +33,7 @@ class _HomePageMobileState extends State<HomePageMobile> {
               Icons.search,
               color: kDarkPurple,
             ),
-            onPressed: () {
-              _authController.signOut();
-            },
+            onPressed: () {},
           )
         ],
       ),

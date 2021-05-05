@@ -1,14 +1,16 @@
+import 'package:animated_theme_switcher/animated_theme_switcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:kyahaal/controllers/authcontroller.dart';
+import 'package:kyahaal/utility/pages.dart';
 import 'package:kyahaal/utility/utility.dart';
+import 'package:kyahaal/views/widgets.dart/theme_config.dart';
 import 'package:line_icons/line_icons.dart';
-
 import 'drawerlisttile.dart';
 
-class CustomDrawer extends StatelessWidget {
+class CustomDrawer extends StatefulWidget {
   const CustomDrawer({
     Key key,
     @required AuthController authController,
@@ -18,69 +20,107 @@ class CustomDrawer extends StatelessWidget {
   final AuthController _authController;
 
   @override
+  _CustomDrawerState createState() => _CustomDrawerState();
+}
+
+class _CustomDrawerState extends State<CustomDrawer> {
+  @override
   Widget build(BuildContext context) {
     return Drawer(
       child: Column(
         children: [
-          UserAccountsDrawerHeader(
-            arrowColor: kPrimaryDarkColor,
-            decoration: BoxDecoration(
-              color: kPrimaryLightColor,
-            ),
-            onDetailsPressed: () {},
-            currentAccountPicture: Obx(
-              () => Container(
+          Stack(
+            children: [
+              UserAccountsDrawerHeader(
+                arrowColor: kPrimaryDarkColor,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: kSecondaryColor.withOpacity(0.5),
-                      blurRadius: 8.0,
-                      offset: Offset(3, 2),
+                  color: kPrimaryLightColor,
+                ),
+                onDetailsPressed: () {},
+                currentAccountPicture: Obx(
+                  () => Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: kSecondaryColor.withOpacity(0.5),
+                          blurRadius: 8.0,
+                          offset: Offset(3, 2),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: _authController.firestoreUser.value == null ||
-                        _authController.firestoreUser.value.imgUrl == null
-                    ? ClipOval(
-                        child: Icon(
-                          LineIcons.user,
-                          color: kDarkPurple,
-                        ),
-                      )
-                    : ClipOval(
-                        child: CachedNetworkImage(
-                          imageUrl: _authController.firestoreUser.value.imgUrl,
-                          placeholder: (s, _) => Icon(
-                            LineIcons.user,
-                            color: kDarkPurple,
+                    child: widget._authController.firestoreUser.value == null ||
+                            widget._authController.firestoreUser.value.imgUrl ==
+                                null
+                        ? ClipOval(
+                            child: Icon(
+                              LineIcons.user,
+                              color: kDarkPurple,
+                            ),
+                          )
+                        : ClipOval(
+                            child: CachedNetworkImage(
+                              imageUrl: widget
+                                  ._authController.firestoreUser.value.imgUrl,
+                              placeholder: (s, _) => Icon(
+                                LineIcons.user,
+                                color: kDarkPurple,
+                              ),
+                            ),
                           ),
-                        ),
+                  ),
+                ),
+                accountName: Obx(
+                  () => Text(
+                    widget._authController.firestoreUser.value == null
+                        ? ''
+                        : widget._authController.firestoreUser.value.uName ??
+                            '',
+                    style: GoogleFonts.openSans(
+                      color: kPrimaryDarkColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                accountEmail: Obx(
+                  () => Text(
+                    widget._authController.firebaseUser.value == null
+                        ? ''
+                        : widget._authController.firebaseUser.value
+                                .phoneNumber ??
+                            '',
+                    style: GoogleFonts.openSans(
+                      color: kPrimaryDarkColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 10.0,
+                top: 50,
+                child: ThemeSwitcher(
+                  builder: (BuildContext context) {
+                    return IconButton(
+                      icon: Icon(
+                        Icons.brightness_3_outlined,
+                        color: kDarkPurple,
                       ),
-              ),
-            ),
-            accountName: Obx(
-              () => Text(
-                _authController.firestoreUser.value == null
-                    ? ''
-                    : _authController.firestoreUser.value.uName ?? '',
-                style: GoogleFonts.openSans(
-                  color: kPrimaryDarkColor,
-                  fontWeight: FontWeight.w600,
+                      onPressed: () {
+                        //Get.back();
+                        // ThemeSwitcher.of(context).changeTheme(
+                        //   theme: ThemeProvider.of(context).brightness ==
+                        //           Brightness.light
+                        //       ? darkTheme
+                        //       : lightTheme,
+                        // );
+                        // setState(() {});
+                      },
+                    );
+                  },
                 ),
-              ),
-            ),
-            accountEmail: Obx(
-              () => Text(
-                _authController.firebaseUser.value == null
-                    ? ''
-                    : _authController.firebaseUser.value.phoneNumber ?? '',
-                style: GoogleFonts.openSans(
-                  color: kPrimaryDarkColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
+              )
+            ],
           ),
           DrawerListTile(
             iconData: LineIcons.userFriends,
@@ -91,7 +131,10 @@ class CustomDrawer extends StatelessWidget {
           DrawerListTile(
             iconData: Icons.contacts_outlined,
             title: 'Contacts',
-            onTilePressed: () {},
+            onTilePressed: () {
+              Get.back();
+              Get.toNamed(RoutesName.CONTACTS);
+            },
           ),
           DrawerListTile(
             iconData: Icons.bookmark_border_outlined,

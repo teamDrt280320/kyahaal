@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:kyahaal/utility/bindings/contactsbindings.dart';
 import 'package:kyahaal/utility/bindings/initialbindings.dart';
 import 'package:kyahaal/views/authentication/authentication.dart';
+import 'package:kyahaal/views/chat/chat.dart';
 import 'package:kyahaal/views/completesetup/completesetup.dart';
 import 'package:kyahaal/views/contacts/contacts.dart';
 import 'package:kyahaal/views/home/home.dart';
@@ -13,6 +14,7 @@ class RoutesName {
   static const String HOMEPAGE = '/home';
   static const String COMPLETESETUPPAGE = '/complete-setup';
   static const String CONTACTS = '/friends';
+  static const String CHAT = '/chat';
 }
 
 final List<GetPage> appPages = [
@@ -25,7 +27,6 @@ final List<GetPage> appPages = [
     name: RoutesName.SPLASHPAGE,
     page: () => SplashPage(),
     transition: Transition.cupertino,
-    fullscreenDialog: true,
   ),
   GetPage(
     name: RoutesName.AUTHPAGE,
@@ -45,5 +46,10 @@ final List<GetPage> appPages = [
       InitialBindins(),
       ContactsBinding(),
     ],
+  ),
+  GetPage(
+    name: RoutesName.CHAT,
+    page: () => ChatPage(),
+    transition: Transition.cupertino,
   ),
 ];
