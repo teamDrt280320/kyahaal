@@ -1,4 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:rsa_encrypt/rsa_encrypt.dart';
+import 'package:pointycastle/api.dart' as crypto;
+
+/*
+* Get Key Pair
+*/
+Future<crypto.AsymmetricKeyPair> futureKeyPair;
+
+//to store the KeyPair once we get data from our future
+crypto.AsymmetricKeyPair keyPair;
+
+Future<crypto.AsymmetricKeyPair<crypto.PublicKey, crypto.PrivateKey>>
+    getKeyPair() {
+  var helper = RsaKeyHelper();
+  return helper.computeRSAKeyPair(helper.getSecureRandom());
+}
 
 /*
  * Colors Constants Starts here
@@ -70,5 +86,8 @@ var statusList = <String>[
 
 const String CONTACTAPI = "https://kyahaal.teamdrt.co.in/all";
 const String APIKEY = "zEgZUcl8eD4MjWyy4nttT1nDrLPwRgvU1UH5chrQ";
+const String MESSAGEENDPOINT = 'message';
+const String USERSENDPOINT = 'users';
 
 const headers = {"x-api-key": APIKEY};
+// google.com, pub-6236661812187085, DIRECT, f08c47fec0942fa0

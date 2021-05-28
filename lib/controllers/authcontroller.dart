@@ -3,14 +3,18 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:kyahaal/modals/user.dart';
 import 'package:kyahaal/utility/pages.dart';
+import 'package:kyahaal/utility/utility.dart';
 import 'package:kyahaal/views/views.dart';
+import 'package:rsa_encrypt/rsa_encrypt.dart';
 
 class AuthController extends GetxController {
   Rxn<User> firebaseUser = Rxn<User>();
@@ -23,12 +27,14 @@ class AuthController extends GetxController {
   var firestore = FirebaseFirestore.instance;
   var messaging = FirebaseMessaging.instance;
   var storage = FirebaseStorage.instance;
+  final remoteConfig = RemoteConfig.instance;
+  var localStorage = GetStorage('preferences');
   Rxn<String> tokeStream = Rxn<String>();
   Rxn<Uint8List> image = Rxn<Uint8List>();
+  var helper = RsaKeyHelper();
 
   final codeSent = false.obs;
   final signingIn = false.obs;
-
   final verificationId = ''.obs;
   final resendToken = 0.obs;
   final setupComplte = false.obs;
@@ -140,6 +146,15 @@ class AuthController extends GetxController {
         );
       }
     } finally {
+      var pairKey = await getKeyPair();
+      await localStorage.write(
+          'privateKey', helper.encodePrivateKeyToPemPKCS1(pairKey.privateKey));
+      if (firestoreUser.value.initialSetupDone)
+        await firestore.collection('users').doc(firebaseUser.value.uid).update({
+          'publicKey': helper.encodePublicKeyToPemPKCS1(
+            pairKey.publicKey,
+          )
+        });
       phoneController.text = '';
       otpController.text = '';
       codeSent.value = false;
@@ -170,7 +185,7 @@ class AuthController extends GetxController {
     }
   }
 
-  handleUserChanges(UserModal userModal) {
+  handleUserChanges(UserModal userModal) async {
     if (!userModal.initialSetupDone && firestoreUser.value != null) {
       Get.offAllNamed(RoutesName.COMPLETESETUPPAGE);
     }
@@ -192,12 +207,16 @@ class AuthController extends GetxController {
         durl = '';
       }
 
+      // ignore: todo
       ///TODO : Add cehck for documents existence so as to decide whether to set or update the data
       await firestore
           .collection('users')
           .doc(firebaseUser.value.uid)
           .set(
             new UserModal(
+              publicKey: helper.encodePublicKeyToPemPKCS1(
+                (await getKeyPair()).publicKey,
+              ),
               uName: userName.text,
               imgUrl: durl,
               status: status,
@@ -205,7 +224,11 @@ class AuthController extends GetxController {
               token: await messaging.getToken(),
             ).toJson(),
           )
-          .then((value) {
+          .then((value) async {
+        await firebaseUser.value.updateProfile(
+          photoURL: durl,
+          displayName: userName.text,
+        );
         signingIn.value = false;
         Get.offAllNamed(RoutesName.HOMEPAGE);
       });

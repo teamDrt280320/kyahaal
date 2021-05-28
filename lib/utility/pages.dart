@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:kyahaal/controllers/chatcontroller.dart';
 import 'package:kyahaal/utility/bindings/contactsbindings.dart';
 import 'package:kyahaal/utility/bindings/initialbindings.dart';
 import 'package:kyahaal/views/authentication/authentication.dart';
@@ -51,5 +52,6 @@ final List<GetPage> appPages = [
     name: RoutesName.CHAT,
     page: () => ChatPage(),
     transition: Transition.cupertino,
+    binding: BindingsBuilder.put(() => ChatController()),
   ),
 ];

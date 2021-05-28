@@ -8,6 +8,7 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart' as http;
 import 'package:kyahaal/modals/contact.dart';
+import 'package:kyahaal/modals/user.dart';
 import 'package:kyahaal/utility/utility.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -60,18 +61,27 @@ class ContactsController extends GetxController {
               if (contact != null && contact.length > 0) {
                 var index = friendsBox.values.toList().indexWhere(
                       (element) => contact[0].phones.toList().any(
-                            (element2) =>
-                                element.number ==
-                                element2.value
-                                    .replaceAll(' ', '')
-                                    .replaceAll('-', ''),
-                          ),
+                        (element2) {
+                          var e1 = getFormattedPhone(element.number);
+                          var e2 = getFormattedPhone(element2.value);
+                          print('element1: ' + e1);
+                          print('element2: ' + e2);
+                          print('element3: ' + (e1 == e2).toString());
+                          return e1 == e2;
+                        },
+                      ),
                     );
+                print(index);
                 item.contactName = contact[0].displayName;
-                if (index == -1) {
-                  friendsBox.add(item);
-                } else {
-                  friendsBox.putAt(index, item);
+                var user = UserModal.fromJson((await getUser(item.uid)));
+                if (user.publicKey != null) {
+                  item.publicKey = user.publicKey;
+                  if (index == -1) {
+                    print('adding ${item.number}');
+                    friendsBox.add(item);
+                  } else {
+                    friendsBox.putAt(index, item);
+                  }
                 }
               }
             }
@@ -84,18 +94,24 @@ class ContactsController extends GetxController {
               if (contact != null && contact.length > 0) {
                 var index = friendsBox.values.toList().indexWhere(
                       (element) => contact[0].phones.toList().any(
-                            (element2) =>
-                                element.number ==
-                                element2.value
-                                    .replaceAll(' ', '')
-                                    .replaceAll('-', ''),
-                          ),
+                        (element2) {
+                          var e1 = getFormattedPhone(element.number);
+                          var e2 = getFormattedPhone(element2.value);
+                          print('element1: ' + e1);
+                          print('element2: ' + e2);
+                          print('element3: ' + (e1 == e2).toString());
+                          return e1 == e2;
+                        },
+                      ),
                     );
-                item.contactName = contact[0].displayName;
-                if (index == -1) {
-                  friendsBox.add(item);
-                } else {
-                  friendsBox.putAt(index, item);
+                var user = UserModal.fromJson((await getUser(item.uid)));
+                if (user.publicKey != null) {
+                  item.publicKey = user.publicKey;
+                  if (index == -1) {
+                    friendsBox.add(item);
+                  } else {
+                    friendsBox.putAt(index, item);
+                  }
                 }
               }
             }
@@ -128,7 +144,20 @@ class ContactsController extends GetxController {
     }
   }
 
+  Future<Map<String, dynamic>> getUser(String uid) async {
+    return await firestore
+        .collection(USERSENDPOINT)
+        .doc(uid)
+        .get()
+        .then((value) => value.data());
+  }
+
   Stream<QuerySnapshot> streamUsers() {
     return firestore.collection('users').snapshots();
   }
+}
+
+String getFormattedPhone(String phone) {
+  phone = phone.replaceAll('+91', '').replaceAll(' ', '').replaceAll('-', '');
+  return phone.substring(phone.length - 10);
 }

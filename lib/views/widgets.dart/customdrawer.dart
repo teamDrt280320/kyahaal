@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kyahaal/controllers/authcontroller.dart';
 import 'package:kyahaal/utility/pages.dart';
 import 'package:kyahaal/utility/utility.dart';
-import 'package:kyahaal/views/widgets.dart/theme_config.dart';
 import 'package:line_icons/line_icons.dart';
 import 'drawerlisttile.dart';
 
@@ -156,6 +155,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
             title: 'KyaHaal FAQ',
             onTilePressed: () {},
           ),
+          DrawerListTile(
+            iconData: Icons.logout,
+            title: 'Logout',
+            onTilePressed: () {
+              widget._authController.signOut();
+            },
+          )
         ],
       ),
     );

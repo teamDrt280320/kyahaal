@@ -48,7 +48,10 @@ dependencies:
   firebase_storage: ^8.0.5
   image_cropper: ^1.4.0
   animated_theme_switcher: ^1.0.9
-
+  rsa_encrypt: ^2.0.0
+  chat_bubbles: ^0.8.1
+  firebase_remote_config: ^0.10.0-dev.2
+  admob_flutter: ^1.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

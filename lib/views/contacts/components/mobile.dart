@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:contacts_service/contacts_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,6 +24,8 @@ class _ContactsPageMobileState extends State<ContactsPageMobile> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          // _contactsController.friendsBox
+          //     .deleteAll(_contactsController.friendsBox.keys);
           // var contact = await ContactsService.openContactForm();
         },
         backgroundColor: kPrimaryLightColor,

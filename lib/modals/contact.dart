@@ -13,9 +13,17 @@ class ContactsModal {
   String username;
   @HiveField(4)
   String contactName;
+  @HiveField(5)
+  String publicKey;
 
-  ContactsModal(
-      {this.number, this.photo, this.uid, this.username, this.contactName});
+  ContactsModal({
+    this.number,
+    this.photo,
+    this.uid,
+    this.username,
+    this.contactName,
+    this.publicKey,
+  });
 
   ContactsModal.fromJson(Map<String, dynamic> json) {
     number = json['number'];
