@@ -32,34 +32,31 @@ class AuthController extends GetxController {
 
   Future<void> sendOtp() async {
     authProcessing.value = true;
-    await simplerLogin.verifyPhoneNumber(
-      phoneNumber: '+91${phoneController.text}',
-      otpController: otpController,
-      timeout: const Duration(seconds: 30),
-      signInOnAutoRetrival: false,
-    );
-    authProcessing.value = false;
-  }
-
-  Future<void> resendOtp() async {
-    await simplerLogin.verifyPhoneNumber(
-      phoneNumber: '+91${phoneController.text}',
-      otpController: otpController,
-      forceResendingToken: simplerLogin.forceResendingToken,
-      timeout: const Duration(seconds: 60),
-      signInOnAutoRetrival: false,
-    );
-  }
-
-  Future<void> verifyOtp() async {
     await simplerLogin
-        .verifyOtp(
-      smsCode: otpController.text,
-      updateProfile: true,
-      displayName: displayNameController.text,
-    )
-        .then(
-      (creds) {
+        .verifyPhoneNumber(
+          phoneNumber: '+91${phoneController.text}',
+          otpController: otpController,
+          timeout: const Duration(seconds: 30),
+          signInOnAutoRetrival: false,
+        )
+        .whenComplete(() => authProcessing.value = false);
+  }
+
+  Future<void> resendOtp() async => simplerLogin.verifyPhoneNumber(
+        phoneNumber: '+91${phoneController.text}',
+        otpController: otpController,
+        forceResendingToken: simplerLogin.forceResendingToken,
+        timeout: const Duration(seconds: 60),
+        signInOnAutoRetrival: false,
+      );
+
+  Future<void> verifyOtp() async => simplerLogin
+          .verifyOtp(
+        smsCode: otpController.text,
+        updateProfile: true,
+        displayName: displayNameController.text,
+      )
+          .then((creds) {
         if (creds?.user != null) {
           userCollection.doc(creds!.user!.uid).set(FirestoreUser(
                 phone: phoneController.text,
@@ -67,14 +64,11 @@ class AuthController extends GetxController {
                 photoURL: '',
                 status: '',
               ).toMap());
-          FlushbarHelper.createSuccess(message: 'Welcome to KyaHaal!')
-              .show(Get.context!);
-
-          flush();
+          FlushbarHelper.createSuccess(
+            message: 'Welcome to KyaHaal!',
+          ).show(Get.context!);
         }
-      },
-    );
-  }
+      });
 
   Future<void> signOut() async {
     await simplerLogin.signOut();
@@ -85,20 +79,13 @@ class AuthController extends GetxController {
       .snapshots()
       .map((snapshot) => FirestoreUser.fromFirestore(snapshot));
 
-  void flush() {
-    phoneController.clear();
-    otpController.clear();
-    displayNameController.clear();
-    error.value = null;
-    otpSent.value = false;
-  }
-
   void _handleAuthStateChange(User? user) {
     if (user?.uid != null) {
       currentUserData.bindStream(streamCurrentUserData);
-      Get.toNamed(Routes.home);
+      flush();
+      Get.offNamed(Routes.home);
     } else {
-      Get.toNamed(Routes.login);
+      Get.offNamed(Routes.login);
     }
   }
 
@@ -124,5 +111,13 @@ class AuthController extends GetxController {
     otpSent.bindStream(simplerLogin.otpSent);
     userStream.bindStream(simplerLogin.userStream);
     error.bindStream(simplerLogin.errorStream);
+  }
+
+  void flush() {
+    phoneController.clear();
+    otpController.clear();
+    displayNameController.clear();
+    error.value = null;
+    otpSent.value = false;
   }
 }

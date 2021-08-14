@@ -11,9 +11,7 @@ class KyaHaal extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (FocusManager.instance.primaryFocus != null) {
-          FocusManager.instance.primaryFocus!.unfocus();
-        }
+        FocusManager.instance.primaryFocus?.unfocus();
       },
       child: GetMaterialApp(
         debugShowCheckedModeBanner: false,

@@ -16,6 +16,8 @@ class InputField extends StatelessWidget {
     this.validator,
     required this.controller,
     this.onSubmit,
+    this.readOnly = false,
+    this.letterSpacing,
   }) : super(key: key);
 
   final TextInputAction? textInputAction;
@@ -24,10 +26,11 @@ class InputField extends StatelessWidget {
   final TextInputType? keyboardType;
   final Iterable<String>? autofillHints;
   final int? maxLength;
-  final bool obscureText;
+  final bool obscureText, readOnly;
   final String? Function(String?)? validator;
   final TextEditingController controller;
   final Function(String)? onSubmit;
+  final double? letterSpacing;
 
   OutlineInputBorder outlineInputBorder(
       {Color borderColor = brandBlack, double borderWidth = 1}) {
@@ -39,29 +42,33 @@ class InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      onFieldSubmitted: onSubmit,
-      controller: controller,
-      validator: validator,
-      obscureText: obscureText,
-      cursorColor: brandBlack,
-      inputFormatters: [
-        if (maxLength != null) LengthLimitingTextInputFormatter(maxLength)
-      ],
-      textInputAction: textInputAction,
-      keyboardType: keyboardType,
-      autofillHints: autofillHints,
-      decoration: InputDecoration(
-        labelStyle: Get.textTheme.bodyText1?.copyWith(color: brandBlack),
-        prefixText: prefixText,
-        labelText: label,
-        border: outlineInputBorder(),
-        enabledBorder: outlineInputBorder(),
-        focusedBorder: outlineInputBorder(borderWidth: 2),
-        errorBorder: outlineInputBorder(borderColor: Colors.red),
-        focusedErrorBorder:
-            outlineInputBorder(borderWidth: 2, borderColor: Colors.red),
-        floatingLabelBehavior: FloatingLabelBehavior.always,
+    return AbsorbPointer(
+      absorbing: readOnly,
+      child: TextFormField(
+        onFieldSubmitted: onSubmit,
+        controller: controller,
+        validator: validator,
+        obscureText: obscureText,
+        cursorColor: brandBlack,
+        inputFormatters: [
+          if (maxLength != null) LengthLimitingTextInputFormatter(maxLength)
+        ],
+        style: Get.textTheme.headline6?.copyWith(letterSpacing: letterSpacing),
+        textInputAction: textInputAction,
+        keyboardType: keyboardType,
+        autofillHints: autofillHints,
+        decoration: InputDecoration(
+          labelStyle: Get.textTheme.bodyText1?.copyWith(color: brandBlack),
+          prefixText: prefixText,
+          labelText: label,
+          border: outlineInputBorder(),
+          enabledBorder: outlineInputBorder(),
+          focusedBorder: outlineInputBorder(borderWidth: 2),
+          errorBorder: outlineInputBorder(borderColor: Colors.red),
+          focusedErrorBorder:
+              outlineInputBorder(borderWidth: 2, borderColor: Colors.red),
+          floatingLabelBehavior: FloatingLabelBehavior.always,
+        ),
       ),
     );
   }

@@ -65,9 +65,8 @@ class FirestoreUser {
   }
 
   @override
-  String toString() {
-    return '${phone.toString()}, ${displayName.toString()}, ${photoURL.toString()}, ${status.toString()}, ';
-  }
+  String toString() =>
+      '${phone.toString()}, ${displayName.toString()}, ${photoURL.toString()}, ${status.toString()}, ';
 
   @override
   bool operator ==(Object other) =>

@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
             onTap: () {
               _authController.signOut();
             },
-            child: Icon(Icons.logout),
+            child: const Icon(Icons.logout),
           ),
         ],
       ),
